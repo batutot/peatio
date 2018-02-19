@@ -29,7 +29,7 @@ describe AccountVersion do
     it 'should save record if associated account is fresh' do
       expect do
         # `unlock_and_sub_funds('5.0'.to_d, locked: '8.0'.to_d, fee: ZERO)`
-        ActiveRecord::Base.connection.execute "update accounts set balance = balance + 3, locked = locked - 8 where id = #{account.id}"
+        account.update_attributes(balance: account.balance + 3, locked: account.locked - 8)
         AccountVersion.optimistically_lock_account_and_create!('13.0'.to_d, '2.0'.to_d, attrs)
       end.to change(AccountVersion, :count).by(1)
     end
@@ -40,7 +40,7 @@ describe AccountVersion do
 
       expect do
         # `unlock_and_sub_funds('5.0'.to_d, locked: '8.0'.to_d, fee: ZERO)`
-        ActiveRecord::Base.connection.execute "update accounts set balance = balance + 3, locked = locked - 8 where id = #{account.id}"
+        account.update_attributes(balance: account.balance + 3, locked: account.locked - 8)
         AccountVersion.optimistically_lock_account_and_create!('13.0'.to_d, '2.0'.to_d, attrs)
       end.to raise_error(ActiveRecord::StaleObjectError)
 
